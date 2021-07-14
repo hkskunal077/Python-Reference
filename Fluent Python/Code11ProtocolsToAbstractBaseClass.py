@@ -127,6 +127,5 @@ class BingoCage(Tombola):
             raise LookupError('pick from Empty BingoCage')
     def __call__(self):
         self.pick()
-    
-
+    ##
 
