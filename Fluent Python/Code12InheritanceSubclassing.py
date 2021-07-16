@@ -65,3 +65,11 @@ def print_mro(cls):
 
 import tkinter
 print_mro(tkinter.Text)
+
+#Multiple Inheritance in the Real Wor\ld
+#Tkinter GUI toolkit uses Multiple Inheritance 
+import tkinter; print()
+print_mro(tkinter.Toplevel)
+print_mro(tkinter.Widget)
+print_mro(tkinter.Button)
+print_mro(tkinter.Text)
