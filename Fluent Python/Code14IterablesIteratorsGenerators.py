@@ -181,5 +181,4 @@ print(tuple(list(arithprog_gen(1, Fraction(1, 3), 2))))
 
 import itertools
 gen = itertools.takewhile(lambda n: n<2, itertools.count(1, .2))
-print(list(gen))
-
+print(tuple(list(gen)))
