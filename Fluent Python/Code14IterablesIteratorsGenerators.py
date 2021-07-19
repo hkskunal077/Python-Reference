@@ -181,4 +181,21 @@ print(tuple(list(arithprog_gen(1, Fraction(1, 3), 2))))
 
 import itertools
 gen = itertools.takewhile(lambda n: n<2, itertools.count(1, .2))
-print(tuple(list(gen)))
+print(list(gen))
+
+#Running Properties of Sum, Min, Max, Product and Factorial 
+sample = [5, 4, 2, 8, 7, 6, 3, 0, 9, 1]
+import itertools
+print(list(itertools.accumulate(sample)))
+print(list(itertools.accumulate(sample, max)), list(itertools.accumulate(sample, min)))
+import operator
+print(list(itertools.accumulate(sample, operator.mul)))
+
+data = "Handling groupby generators involves nested iteration, outer for loop and inner list constructor".split()
+data.sort(key=len)
+for length, group in itertools.groupby(reversed(data), len):
+    print(length, "->", list(group))
+#Group data using Iterools.groupby functionality
+
+
+
