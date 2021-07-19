@@ -32,8 +32,7 @@ class iterable:
         pass
 iter = iterable()
 from collections import abc 
-print(issubclass(iterable, abc.Iterable))
-print(isinstance(iter, abc.Iterable))
+print(issubclass(iterable, abc.Iterable), isinstance(iter, abc.Iterable))
 
 #Iterable = Any object from which the iter built-in function
 #can obtain an iterator. __iter__ special methods 
@@ -77,6 +76,8 @@ class SentenceIterator:
         self.index = 0
     def __next__(self):
         try:
+            #We used the defaul list.__iter__ to construct
+            #SentenceIteator.__next__ method in class
             word = self.words[self.index]
         except IndexError:
             raise StopIteration()
@@ -87,4 +88,98 @@ class SentenceIterator:
 
 #Key Difference is ITERABLE has __iter__ method
 #and the corresponding ITERATOR has __next__ 
-#and __iter__ method alongside
+#and __iter__ method alongside 
+print(issubclass(SentenceIterator, abc.Iterator), 
+isinstance(SentenceIterator, abc.Iterator), 
+isinstance(Sentence, abc.Iterable),
+issubclass(Sentence, abc.Iterator))
+#Only SentenceIterator having the __next__ and __iter__ method works.
+#We should implement the iterator as separate class iter(my_iterable)
+#An Iterable should never act as an iterator over itself.
+
+import re
+import reprlib
+RE_WORD = re.compile('\w+')
+
+class Sentence:
+    def __init__(self, text):
+        self.text = text
+        self.words = RE_WORD.findall(text)
+    def __repr__(self):
+        return 'Sentence(%s)'%reprlib.repr(self.text)
+    def __iter__(self):
+        """finishes when done providing values"""
+        for word in self.words:
+            yield word
+        return
+sentence = Sentence('Appdata and Locales')
+print(sentence.__iter__.__doc__, sentence.__iter__)
+
+#Lazy Evaluation of Sentence Take
+import re
+import reprlib
+RE_WORD = re.compile('\w+')
+
+class Sentence:
+    def __init__(self, text):
+        self.text = text
+    def __repr__(self):
+        return 'Sentence(%s)'%reprlib.repr(self.text)
+    def __iter__(self):
+        for match in RE_WORD.finditer(self.text):
+            yield match.group()
+
+
+#Generator Expression 
+import re
+import reprlib
+RE_WORD = re.compile('\w+')
+
+class Sentence:
+    #Since the generator Expression yeilds it using Lazy Evaluation
+    #It is better to use GexExps instead of ListComps
+    def __init__(self, text):
+        self.text = text
+    def __repr__(self):
+        return 'Sentence(%s)'%reprlib.repr(self.text)
+    def __iter__(self):
+        return (match.group() for match in RE_WORD.finditer(self.text))
+print(Sentence('AppFiles and Disc').__iter__())
+
+#Arithmetic Progression Generator
+#When items are produced at fly, instead of retrieving from a collection
+class ArtihmeticProgression:
+    def __init__(self, begin, step, end=None):
+        self.begin = begin
+        self.step = step
+        self.end = end #None -> "infinite" series
+    def __iter__(self):
+        #Typecasted the type of step to begin
+        result = type(self.begin+self.step)(self.begin)
+        forever = self.end is None
+        index = 0
+        while forever or result<self.end:
+            yield result
+            index += 1
+            result = self.begin + self.step*index
+print(ArtihmeticProgression(1, 2, 3).__iter__.__dir__())
+print(ArtihmeticProgression(1, 2, 3))
+print(tuple(list(ArtihmeticProgression(1, 2, 10))))
+from fractions import Fraction
+print(tuple(ArtihmeticProgression(0, Fraction(1, 3), 2)))
+
+#Corresponding Generator Expression 
+def arithprog_gen(begin, step, end=None):
+    result = type(begin+step)(begin)
+    forever = end is None
+    index = 0
+    while forever or result<end:
+        yield result
+        index += 1
+        result = begin + step*index
+print(tuple(list(arithprog_gen(1, Fraction(1, 3), 2))))
+
+import itertools
+gen = itertools.takewhile(lambda n: n<2, itertools.count(1, .2))
+print(list(gen))
+
